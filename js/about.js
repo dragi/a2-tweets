@@ -9,6 +9,16 @@ function parseTweets(runkeeper_tweets) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
 
+	updateDates(tweet_array);
+	updateCategories(tweet_array);
+
+	
+	//This line modifies the DOM, searching for the tag with the numberTweets ID and updating the text.
+	//It works correctly, your task is to update the text of the other tags in the HTML file!
+	document.getElementById('numberTweets').innerText = tweet_array.length;	
+}
+
+function updateDates(tweet_array) {
 	let min = tweet_array[0].time;
 	let max = tweet_array[0].time;
 
@@ -27,13 +37,45 @@ function parseTweets(runkeeper_tweets) {
   		month: 'long', 
   		day: 'numeric' 
 	};
-	document.getElementById('firstDate').innerText = min.toLocaleDateString('en-US', options);
-	document.getElementById('lastDate').innerText = max.toLocaleDateString('en-US', options);
 
-	
-	//This line modifies the DOM, searching for the tag with the numberTweets ID and updating the text.
-	//It works correctly, your task is to update the text of the other tags in the HTML file!
-	document.getElementById('numberTweets').innerText = tweet_array.length;	
+	document.getElementById('firstDate').innerText = min.toLocaleDateString('en-US', options);
+	document.getElementById('lastDate').innerText = max.toLocaleDateString('en-US', options);	
+}
+
+function updateCategories(tweet_array) {
+	let live_event = 0;
+	let achievement = 0;
+	let completed_event = 0;
+	let miscellaneous = 0;
+
+	for (let i = 0; i < tweet_array.length; i++) {
+		if (tweet_array[i].source == "live_event") {
+			live_event++;
+		} else if (tweet_array[i].source == "achievement") {
+			achievement++;
+		} else if (tweet_array[i].source == "completed_event") {
+			completed_event++;
+		} else {
+			miscellaneous++;
+		}
+	}
+
+	setClassText('completedEvents', completed_event);
+	setClassText('completedEventsPct', formatPct(completed_event, tweet_array.length));
+	setClassText('liveEvents', live_event);
+	setClassText('liveEventsPct', formatPct(live_event, tweet_array.length));
+	setClassText('achievements', achievement);
+	setClassText('achievementsPct', formatPct(achievement, tweet_array.length));
+	setClassText('miscellaneous', miscellaneous);
+	setClassText('miscellaneousPct', formatPct(miscellaneous, tweet_array.length));
+}
+
+function setClassText(className, value) {
+	document.querySelectorAll('.' + className).forEach(el => el.innerText = value);
+}
+
+function formatPct(count, total) {
+	return math.format(count / total * 100, { notation: 'fixed', precision: 2 }) + '%';
 }
 
 //Wait for the DOM to load
