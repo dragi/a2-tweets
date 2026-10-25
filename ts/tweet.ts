@@ -23,15 +23,33 @@ class Tweet {
     //returns a boolean, whether the text includes any content written by the person tweeting.
     get written():boolean {
         //TODO: identify whether the tweet is written
-        return false;
+        if (this.source !== "completed_event") {
+           return false;
+        }
+        
+        let linkIndex = this.text.indexOf("https://");
+        let stripped = this.text;
+        
+        if (linkIndex != -1) {
+            stripped = this.text.slice(0, linkIndex);
+        }
+
+        stripped = stripped.trim();
+        return !stripped.endsWith("Check it out!");
     }
 
     get writtenText():string {
         if(!this.written) {
             return "";
         }
-        //TODO: parse the written text from the tweet
-        return "";
+        
+        let startIndex = this.text.indexOf(" - ") + 3;
+        let endIndex = this.text.indexOf("https://");
+        if (endIndex === -1) {
+            endIndex = this.text.length;
+        }
+
+        return this.text.slice(startIndex, endIndex).trim();
     }
 
     get activityType():string {

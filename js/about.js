@@ -11,6 +11,7 @@ function parseTweets(runkeeper_tweets) {
 
 	updateDates(tweet_array);
 	updateCategories(tweet_array);
+	updateUserWritten(tweet_array);
 
 	
 	//This line modifies the DOM, searching for the tag with the numberTweets ID and updating the text.
@@ -76,6 +77,23 @@ function setClassText(className, value) {
 
 function formatPct(count, total) {
 	return math.format(count / total * 100, { notation: 'fixed', precision: 2 }) + '%';
+}
+
+function updateUserWritten(tweet_array) {
+	let completedTweets = 0;
+	let userWrittenTweets = 0;
+	
+	for (let i = 0; i < tweet_array.length; i++) {
+		if (tweet_array[i].source === "completed_event") {
+			completedTweets++;
+			if (tweet_array[i].written) {
+				userWrittenTweets++;
+			}
+		}
+	}
+
+	setClassText('written', userWrittenTweets);
+	setClassText('writtenPct', formatPct(userWrittenTweets, completedTweets));
 }
 
 //Wait for the DOM to load
