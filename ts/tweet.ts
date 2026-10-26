@@ -52,12 +52,15 @@ class Tweet {
         return this.text.slice(startIndex, endIndex).trim();
     }
 
-    get activityType():string {
+    get activityType(): string {
         if (this.source != 'completed_event') {
             return "unknown";
         }
-        //TODO: parse the activity type from the text of the tweet
-        return "";
+        let words = this.text.split(" ");
+        if (words[4] !== "mi" && words[4] !== "km") {
+            return "unknown";
+        }
+        return words[5];
     }
 
     get distance():number {
@@ -65,6 +68,12 @@ class Tweet {
             return 0;
         }
         //TODO: prase the distance from the text of the tweet
+        let words = this.text.split(" ");
+        if (words[4] === "mi") {
+            return parseFloat(words[3]);
+        } else if (words[4] === "km") {
+            return parseFloat(words[3]) / 1.609;
+        }
         return 0;
     }
 
