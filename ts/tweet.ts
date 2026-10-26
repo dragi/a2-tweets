@@ -77,8 +77,17 @@ class Tweet {
         return 0;
     }
 
-    getHTMLTableRow(rowNumber:number):string {
-        //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        return "<tr></tr>";
+   // Returns a table row with the row number, activity type, and tweet text with clickable links
+    getHTMLTableRow(rowNumber: number): string {
+        let words = this.text.split(" ");
+        let textWithLink = "";
+        for (let i = 0; i < words.length; i++) {
+            if (words[i].startsWith("https://")) {
+                textWithLink += "<a href=\"" + words[i] + "\">" + words[i] + "</a> ";
+            } else {
+                textWithLink += words[i] + " ";
+            }
+        }
+        return "<tr><td>" + rowNumber + "</td><td>" + this.activityType + "</td><td>" + textWithLink + "</td></tr>";
     }
 }
