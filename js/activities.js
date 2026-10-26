@@ -10,20 +10,90 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
+	let activityData = [];
+	const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+	for (let i = 0; i < tweet_array.length; i++) {
+		if (tweet_array[i].activityType !== "unknown") {
+			activityData.push({
+				activityType: tweet_array[i].activityType,
+				day: daysOfWeek[tweet_array[i].time.getDay()],
+				distance: tweet_array[i].distance,
+				time: tweet_array[i].time
+			});
+		}
+	}
+
+	let topThree = updateActivityType(tweet_array);
+	let topThreeNames = topThree.map(entry => entry[0]);
+	let topThreeData = activityData.filter(row => topThreeNames.includes(row.activityType));
 
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "A graph of the number of Tweets containing each type of activity.",
 	  "data": {
-	    "values": tweet_array
-	  }
+	    "values": activityData
+	  },
 	  //TODO: Add mark and encoding
+	  "mark": "bar",
+	  "encoding": {
+		"x": { "field": "activityType", "type": "nominal", "title": "Activity type"},
+	  	"y": { "aggregate": "count", "type": "quantitative", "title": "Number of tweets"},
+	  }
 	};
-	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
-	updateActivityType(tweet_array);
+	week_vis_spec = {
+	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+	  "description": "A graph of the three most-tweeted activities by day of the week.",
+	  "data": {
+	    "values": topThreeData
+	  },
+	  //TODO: Add mark and encoding
+	  "mark": "point",
+	  "encoding": {
+		"x": { "field": "day", "type": "ordinal", "sort": daysOfWeek, "title": "Time (day)"},
+	  	"y": { "field": "distance", "type": "quantitative", "title": "Distance (miles)" },
+		"color": { "field": "activityType", "type": "nominal", "title": "Activity type" }
+		}
+	};
+
+	aggregated_week_vis_spec = {
+	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+	  "description": "A graph of the three most-tweeted activities by day of the week.",
+	  "data": {
+	    "values": topThreeData
+	  },
+	  //TODO: Add mark and encoding
+	  "mark": "point",
+	  "encoding": {
+		"x": { "field": "day", "type": "ordinal", "sort": daysOfWeek, "title": "Time (day)"},
+	  	"y": { "field": "distance", "aggregate": "mean", "type": "quantitative", "title": "Mean of distance (miles)" },
+		"color": { "field": "activityType", "type": "nominal", "title": "Activity type" }
+		}
+	};
+	
+
+	document.getElementById('distanceVisAggregated').style.display = "none";
+
+	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
+	vegaEmbed('#distanceVis', week_vis_spec, {actions:false});
+	vegaEmbed('#distanceVisAggregated', aggregated_week_vis_spec, {actions:false});
+
+	// Toggle between the full and aggregated charts when the button is pressed
+	document.getElementById('aggregate').addEventListener('click', function() {
+		let full = document.getElementById('distanceVis');
+		let aggregated = document.getElementById('distanceVisAggregated');
+		if (full.style.display === "none") {
+			full.style.display = "block";
+			aggregated.style.display = "none";
+			this.innerText = "Show means";
+		} else {
+			full.style.display = "none";
+			aggregated.style.display = "block";
+			this.innerText = "Show all activities";
+		}
+	});
 }
 
 function updateActivityType(tweet_array) {
@@ -70,6 +140,8 @@ function updateActivityType(tweet_array) {
 	document.getElementById('longestActivityType').innerText = topThreeByDistance[0][0];
 	document.getElementById('shortestActivityType').innerText = topThreeByDistance.at(-1)[0];
 	document.getElementById('weekdayOrWeekendLonger').innerText = weekdayAvg > weekendAvg ? "weekdays" : "weekends";
+
+	return topThree;
 }
 
 //Wait for the DOM to load
