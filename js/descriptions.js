@@ -19,8 +19,12 @@ function parseTweets(runkeeper_tweets) {
 	}
 }
 
+// Checks search box for query and populates rows with results
 function addEventHandlerForSearch() {
 	//TODO: Search the written tweets as text is entered into the search box, and add them to the table
+	document.getElementById('searchCount').innerText = 0;
+	document.getElementById('searchText').innerText = "";
+	
 	const searchBox = document.getElementById('textFilter');
 	const table = document.getElementById('tweetTable');
 

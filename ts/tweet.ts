@@ -38,6 +38,7 @@ class Tweet {
         return !stripped.endsWith("Check it out!");
     }
 
+    // returns a string indicating whether the text is written by a human
     get writtenText():string {
         if(!this.written) {
             return "";
@@ -52,6 +53,7 @@ class Tweet {
         return this.text.slice(startIndex, endIndex).trim();
     }
 
+    // returns a string that indicates the type of activity, or "unknown" if not available
     get activityType(): string {
         if (this.source != 'completed_event') {
             return "unknown";
@@ -63,6 +65,7 @@ class Tweet {
         return words[5];
     }
 
+    // returns a number that is the distance in miles of a given activity
     get distance():number {
         if(this.source != 'completed_event') {
             return 0;

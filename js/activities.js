@@ -96,6 +96,7 @@ function parseTweets(runkeeper_tweets) {
 	});
 }
 
+// Finds the first, second, and third most popular activities, their distances, and weekday/weekend counts
 function updateActivityType(tweet_array) {
 	const activityTypes = new Map();
 	const activityDistances = new Map();

@@ -19,6 +19,7 @@ function parseTweets(runkeeper_tweets) {
 	document.getElementById('numberTweets').innerText = tweet_array.length;	
 }
 
+// Finds the earliest and latest dates in the set
 function updateDates(tweet_array) {
 	let min = tweet_array[0].time;
 	let max = tweet_array[0].time;
@@ -43,6 +44,7 @@ function updateDates(tweet_array) {
 	document.getElementById('lastDate').innerText = max.toLocaleDateString('en-US', options);	
 }
 
+// Counts the number of events per category
 function updateCategories(tweet_array) {
 	let live_event = 0;
 	let achievement = 0;
@@ -79,6 +81,7 @@ function formatPct(count, total) {
 	return math.format(count / total * 100, { notation: 'fixed', precision: 2 }) + '%';
 }
 
+// Counts the number of user written tweets
 function updateUserWritten(tweet_array) {
 	let completedTweets = 0;
 	let userWrittenTweets = 0;
